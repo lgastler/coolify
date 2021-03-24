@@ -16,6 +16,16 @@
   let branches = [];
   let repositories = [];
 
+  function dashify(str, options) {
+    if (typeof str !== 'string') throw new TypeError('expected a string');
+    return str.trim()
+      .replace(/([a-z])([A-Z])/g, '$1-$2')
+      .replace(/\W/g, m => /[À-ž]/.test(m) ? m : '-')
+      .replace(/^-+|-+$/g, '')
+      .replace(/-{2,}/g, m => options && options.condense ? '-' : m)
+      .toLowerCase();
+  }
+
   async function loadBranches() {
     loading.branches = true;
     const selectedRepository = repositories.find(
@@ -68,7 +78,7 @@
     const top = screen.height / 2 - 618 / 2;
     const newWindow = open(
       `https://github.com/apps/${
-        import.meta.env.VITE_GITHUB_APP_NAME
+        dashify(import.meta.env.VITE_GITHUB_APP_NAME)
       }/installations/new`,
       "Install App",
       "resizable=1, scrollbars=1, fullscreen=0, height=1000, width=1020,top=" +
